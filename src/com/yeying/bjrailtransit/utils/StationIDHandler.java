@@ -1,12 +1,15 @@
 package com.yeying.bjrailtransit.utils;
 
 public class StationIDHandler {
-    public static int getID(String name, String line) {
+    public static int generateID(String name, String line) {
         int id = 0;
+        for (int i = 0; i < name.length(); i++) {
+            id += name.charAt(i);
+        }
+        for (int i = 0; i < line.length(); i++) {
+            id += line.charAt(i);
+        }
+        // System.out.println(id);
         return id;
-    }
-
-    public static void main(String[] args) {
-        StationIDHandler.getID("西直门", "2号线");
     }
 }

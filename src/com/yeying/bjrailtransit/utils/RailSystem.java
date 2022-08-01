@@ -1,7 +1,4 @@
-package com.yeying.bjrailtransit;
-
-import com.yeying.bjrailtransit.utils.Station;
-import com.yeying.bjrailtransit.utils.StationIDHandler;
+package com.yeying.bjrailtransit.utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +16,11 @@ public class RailSystem {
     }
 
     public Station getStation(String name, String line) {
-        int id = StationIDHandler.getID(name, line);
-        return stations.getOrDefault(id, null);
+        int id = StationIDHandler.generateID(name, line);
+        if(!stations.containsKey(id)){
+            Station newStation = new Station(name, line);
+            stations.put(id, newStation);
+        }
+        return stations.get(id);
     }
 }
