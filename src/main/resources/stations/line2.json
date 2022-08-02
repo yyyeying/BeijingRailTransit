@@ -1,0 +1,140 @@
+{
+  "line": "2号线",
+  "stations": [
+    {
+      "name": "西直门",
+      "links": [
+        {
+          "name": "西直门",
+          "line": "4号线",
+          "distance": 0
+        },
+        {
+          "name": "西直门",
+          "line": "13号线",
+          "distance": 0
+        },
+        {
+          "name": "车公庄",
+          "line": "2号线",
+          "distance": 909
+        },
+        {
+          "name": "积水潭",
+          "line": "2号线",
+          "distance": 1899
+        }
+      ]
+    },
+    {
+      "name": "车公庄",
+      "links": [
+        {
+          "name": "西直门",
+          "line": "2号线",
+          "distance": 909
+        },
+        {
+          "name": "阜成门",
+          "line": "2号线",
+          "distance": 960
+        },
+        {
+          "name": "车公庄",
+          "line": "6号线",
+          "distance": 0
+        }
+      ]
+    },
+    {
+      "name": "阜成门",
+      "links": [
+        {
+          "name": "车公庄",
+          "line": "2号线",
+          "distance": 960
+        },
+        {
+          "name": "复兴门",
+          "line": "2号线",
+          "distance": 1832
+        }
+      ]
+    },
+    {
+      "name": "复兴门",
+      "links": [
+        {
+          "name": "长椿街",
+          "line": "2号线",
+          "distance": 1234
+        },
+        {
+          "name": "阜成门",
+          "line": "2号线",
+          "distance": 1832
+        },
+        {
+          "name": "复兴门",
+          "line": "1号线",
+          "distance": 0
+        },
+        {
+          "name": "太平桥",
+          "line": "19号线",
+          "distance": 0
+        }
+      ]
+    },
+    {
+      "name": "长椿街",
+      "links": [
+        {
+          "name": "复兴门",
+          "line": "2号线",
+          "distance": 1234
+        },
+        {
+          "name": "宣武门",
+          "line": "2号线",
+          "distance": 929
+        }
+      ]
+    },
+    {
+      "name": "宣武门",
+      "links": [
+        {
+          "name": "长椿街",
+          "line": "2号线",
+          "distance": 929
+        },
+        {
+          "name": "和平门",
+          "line": "2号线",
+          "distance": 851
+        },
+        {
+          "name": "宣武门",
+          "line": "4号线",
+          "distance": 0
+        }
+      ]
+    },
+    {
+      "name": "和平门",
+      "links": [
+        {
+          "name": "宣武门",
+          "line": "2号线",
+          "distance": 851
+        },
+        {
+          "name": "前门",
+          "line": "2号线",
+          "distance": 1171
+        }
+      ]
+    }
+  ]
+}
