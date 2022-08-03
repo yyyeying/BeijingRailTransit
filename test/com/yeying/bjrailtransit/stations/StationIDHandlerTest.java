@@ -1,4 +1,4 @@
-package com.yeying.bjrailtransit.utils;
+package com.yeying.bjrailtransit.stations;
 
 import org.junit.Test;
 

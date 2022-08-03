@@ -1,28 +1,45 @@
 {
   "line": "2号线",
+  "loop": true,
+  "distances": [
+    909,
+    960,
+    1832,
+    1234,
+    929,
+    851,
+    1171,
+    1634,
+    1023,
+    945,
+    1763,
+    1027,
+    824,
+    2228,
+    794,
+    1237,
+    1766,
+    1899
+  ],
   "stations": [
     {
       "name": "西直门",
       "links": [
         {
           "name": "西直门",
-          "line": "4号线",
-          "distance": 0
+          "line": "4号线"
         },
         {
           "name": "西直门",
-          "line": "13号线",
-          "distance": 0
+          "line": "13号线"
         },
         {
-          "name": "车公庄",
-          "line": "2号线",
-          "distance": 909
+          "name": "北京北站",
+          "line": "京张高铁"
         },
         {
-          "name": "积水潭",
-          "line": "2号线",
-          "distance": 1899
+          "name": "北京北站",
+          "line": "怀密线"
         }
       ]
     },
@@ -30,110 +47,125 @@
       "name": "车公庄",
       "links": [
         {
-          "name": "西直门",
-          "line": "2号线",
-          "distance": 909
-        },
-        {
-          "name": "阜成门",
-          "line": "2号线",
-          "distance": 960
-        },
-        {
           "name": "车公庄",
-          "line": "6号线",
-          "distance": 0
+          "line": "6号线"
         }
       ]
     },
     {
       "name": "阜成门",
       "links": [
-        {
-          "name": "车公庄",
-          "line": "2号线",
-          "distance": 960
-        },
-        {
-          "name": "复兴门",
-          "line": "2号线",
-          "distance": 1832
-        }
       ]
     },
     {
       "name": "复兴门",
       "links": [
         {
-          "name": "长椿街",
-          "line": "2号线",
-          "distance": 1234
-        },
-        {
-          "name": "阜成门",
-          "line": "2号线",
-          "distance": 1832
-        },
-        {
           "name": "复兴门",
-          "line": "1号线",
-          "distance": 0
+          "line": "1号线"
         },
         {
           "name": "太平桥",
-          "line": "19号线",
-          "distance": 0
+          "line": "19号线"
         }
       ]
     },
     {
       "name": "长椿街",
       "links": [
-        {
-          "name": "复兴门",
-          "line": "2号线",
-          "distance": 1234
-        },
-        {
-          "name": "宣武门",
-          "line": "2号线",
-          "distance": 929
-        }
       ]
     },
     {
       "name": "宣武门",
       "links": [
         {
-          "name": "长椿街",
-          "line": "2号线",
-          "distance": 929
-        },
-        {
-          "name": "和平门",
-          "line": "2号线",
-          "distance": 851
-        },
-        {
           "name": "宣武门",
-          "line": "4号线",
-          "distance": 0
+          "line": "4号线"
         }
       ]
     },
     {
       "name": "和平门",
       "links": [
+      ]
+    },
+    {
+      "name": "前门",
+      "links": [
         {
-          "name": "宣武门",
-          "line": "2号线",
-          "distance": 851
+          "name": "前门",
+          "line": "8号线"
         },
         {
           "name": "前门",
-          "line": "2号线",
-          "distance": 1171
+          "line": "前门大街有轨电车"
         }
+      ]
+    },
+    {
+      "name": "崇文门",
+      "links": [
+        {
+          "name": "崇文门",
+          "line": "5号线"
+        }
+      ]
+    },
+    {
+      "name": "北京站",
+      "links": [
+        {
+          "name": "北京站",
+          "line": "副中心线"
+        },
+        {
+          "name": "北京站",
+          "line": "京沈高铁"
+        }
+      ]
+    },
+    {
+      "name": "建国门",
+      "links": [
+        {
+          "name": "建国门",
+          "line": "1号线"
+        }
+      ]
+    },
+    {
+      "name": "朝阳门",
+      "links": [
+      ]
+    },
+    {
+      "name": "东四十条",
+      "links": [
+      ]
+    },
+    {
+      "name": "东直门",
+      "links": [
+      ]
+    },
+    {
+      "name": "雍和宫",
+      "links": [
+      ]
+    },
+    {
+      "name": "安定门",
+      "links": [
+      ]
+    },
+    {
+      "name": "鼓楼大街",
+      "links": [
+      ]
+    },
+    {
+      "name": "积水潭",
+      "links": [
       ]
     }
   ]
