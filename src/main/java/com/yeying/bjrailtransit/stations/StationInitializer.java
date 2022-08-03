@@ -93,7 +93,7 @@ public class StationInitializer {
                         int distance = 0;
                         currentStation.setLink(linkName, linkLine, distance);
                     }
-                    System.out.println(currentStation);
+                    // System.out.println(currentStation);
                 }
             }
         }

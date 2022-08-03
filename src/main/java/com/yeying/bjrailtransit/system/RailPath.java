@@ -1,6 +1,6 @@
 package com.yeying.bjrailtransit.system;
 
-import com.yeying.bjrailtransit.exceptions.StationNotOpenError;
+import com.yeying.bjrailtransit.exceptions.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 
 import java.util.ArrayList;
@@ -19,29 +19,34 @@ public class RailPath implements Cloneable {
 
     public RailPath(Station startStation, Station endStation) {
         this();
-        setStartStation(startStation);
-        setEndStation(endStation);
         try {
+            setEndStation(endStation);
+        } catch (StationNotPassableError e) {
+            System.out.print("End station is not passable, please change another one.\n");
+        }
+
+        try {
+            setStartStation(startStation);
             addStation(startStation, 0);
-        } catch (StationNotOpenError e) {
-            e.printStackTrace();
+        } catch (StationNotPassableError e) {
+            System.out.print("Start station is not passable, please change another one.\n");
         }
 
     }
 
     public RailPath(Station startStation) {
         this();
-        setStartStation(startStation);
         try {
+            setStartStation(startStation);
             addStation(startStation, 0);
-        } catch (StationNotOpenError e) {
-            e.printStackTrace();
+        } catch (StationNotPassableError e) {
+            System.out.print("Start station is not passable, please change another one.\n");
         }
     }
 
-    public void addStation(Station station, int distance) throws StationNotOpenError {
+    public void addStation(Station station, int distance) throws StationNotPassableError {
         if (!station.isPassable()) {
-            throw new StationNotOpenError(station.getName(), station.getLine());
+            throw new StationNotPassableError(station.getName(), station.getLine());
         }
         path.add(station);
         this.distance += distance;
@@ -67,7 +72,10 @@ public class RailPath implements Cloneable {
         return startStation;
     }
 
-    public void setStartStation(Station startStation) {
+    public void setStartStation(Station startStation) throws StationNotPassableError {
+        if (!startStation.isPassable()) {
+            throw new StationNotPassableError(startStation.getName(), startStation.getLine());
+        }
         this.startStation = startStation;
     }
 
@@ -79,7 +87,10 @@ public class RailPath implements Cloneable {
         return distance;
     }
 
-    public void setEndStation(Station endStation) {
+    public void setEndStation(Station endStation) throws StationNotPassableError {
+        if (!endStation.isPassable()) {
+            throw new StationNotPassableError(endStation);
+        }
         this.endStation = endStation;
     }
 
@@ -90,7 +101,8 @@ public class RailPath implements Cloneable {
                 path) {
             message.append(s.getName()).append(", ").append(s.getLine()).append("\n");
         }
-        message.append("distance: ").append(distance);
+        double kiloDistance = distance / 1000.0;
+        message.append("distance: ").append(kiloDistance).append(" km");
         return message.toString();
     }
 

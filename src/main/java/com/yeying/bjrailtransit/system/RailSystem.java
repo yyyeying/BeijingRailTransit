@@ -1,7 +1,7 @@
 package com.yeying.bjrailtransit.system;
 
 import com.yeying.bjrailtransit.exceptions.DuplicateIDError;
-import com.yeying.bjrailtransit.exceptions.StationNotOpenError;
+import com.yeying.bjrailtransit.exceptions.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.stations.StationIDHandler;
 
@@ -76,7 +76,7 @@ public class RailSystem {
                 RailPath newPath = (RailPath) currentPath.clone();
                 try {
                     newPath.addStation(linkStation, linkDistance);
-                } catch (StationNotOpenError e) {
+                } catch (StationNotPassableError e) {
                     continue;
                 }
                 stack.push(newPath);
@@ -122,13 +122,13 @@ public class RailSystem {
                     links.entrySet()) {
                 Station linkStation = link.getKey();
                 int linkDistance = link.getValue();
-                if (currentPath.containsStation(linkStation) || !linkStation.isPassable()) {
+                if (currentPath.containsStation(linkStation)) {
                     continue;
                 }
                 RailPath newPath = (RailPath) currentPath.clone();
                 try {
                     newPath.addStation(linkStation, linkDistance);
-                } catch (StationNotOpenError e) {
+                } catch (StationNotPassableError e) {
                     continue;
                 }
                 stack.push(newPath);

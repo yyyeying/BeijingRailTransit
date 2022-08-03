@@ -1,8 +1,14 @@
 package com.yeying.bjrailtransit.exceptions;
 
-public class StationNotFoundError extends StationError{
-    public StationNotFoundError(String name, String line){
+import com.yeying.bjrailtransit.stations.Station;
+
+public class StationNotFoundError extends StationError {
+    public StationNotFoundError(String name, String line) {
         super(name, line);
+    }
+
+    public StationNotFoundError(Station station) {
+        super(station);
     }
 
     @Override
