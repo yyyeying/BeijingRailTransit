@@ -5,9 +5,7 @@ import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.stations.StationIDHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class RailSystem {
     private static RailSystem instance = new RailSystem();
@@ -50,13 +48,14 @@ public class RailSystem {
      * @return RailPath
      */
     public RailPath shortestPath(Station startStation, Station endStation) {
-        Stack<RailPath> stack = new Stack<>();
+        Queue<RailPath> queue = new LinkedList<>();
         RailPath basicPath = new RailPath(startStation);
         RailPath result = basicPath;
         int distance = -1;
-        stack.push(basicPath);
-        while (!stack.empty()) {
-            RailPath currentPath = stack.pop();
+        queue.offer(basicPath);
+        // queue.push(basicPath);
+        while (!queue.isEmpty()) {
+            RailPath currentPath = queue.poll();
             if (distance > 0 && currentPath.getDistance() > distance) {
                 continue;
             }
@@ -82,7 +81,7 @@ public class RailSystem {
                 } catch (StationNotPassableError e) {
                     continue;
                 }
-                stack.push(newPath);
+                queue.offer(newPath);
             }
         }
         return result;
@@ -100,6 +99,7 @@ public class RailSystem {
      * @return RailPath
      */
     public RailPath longestPath() {
+        int pathCount = 0;
         RailPath result = new RailPath();
         int distance = -1;
         Stack<RailPath> stack = new Stack<>();
@@ -110,13 +110,19 @@ public class RailSystem {
                 stack.push(new RailPath(station));
             }
         }
-        while (!stack.empty()) {
+        // System.out.println(queue);
+        while (!stack.isEmpty()) {
+            pathCount++;
             RailPath currentPath = stack.pop();
             Station currentStation = currentPath.getNewestStation();
             // System.out.println("Current station: " + currentStation + "distance: " + currentPath.getDistance());
             if (currentStation.isEnd() && currentPath.getDistance() > 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
+                System.out.printf("new result: from [%s, %s] to [%s, %s], distance: %d m, stack size: %d\n",
+                        result.getStartStation().getName(), result.getStartStation().getLine(),
+                        result.getNewestStation().getName(), result.getNewestStation().getLine(),
+                        distance, stack.size());
                 continue;
             }
             Map<Station, Integer> links = currentStation.getLinks();
@@ -134,13 +140,23 @@ public class RailSystem {
                 } catch (StationNotPassableError e) {
                     continue;
                 }
-                System.out.printf("distance: %d, current station: %s, longest distance: %d\n", newPath.getDistance(), newPath.getNewestStation().getName(), distance);
+                if (pathCount % 10000000 == 0) {
+                    System.out.printf("distance: %d, from [%s, %s] to [%s, %s], longest distance: %d, stack size: %d \n",
+                            newPath.getDistance(),
+                            newPath.getStartStation().getName(), newPath.getStartStation().getLine(),
+                            newPath.getNewestStation().getName(), newPath.getNewestStation().getLine(),
+                            distance, stack.size());
+                }
                 stack.push(newPath);
                 newPathAppended++;
             }
             if (newPathAppended == 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
+                System.out.printf("new result: from [%s, %s] to [%s, %s], distance: %d m, stack size: %d\n",
+                        result.getStartStation().getName(), result.getStartStation().getLine(),
+                        result.getNewestStation().getName(), result.getNewestStation().getLine(),
+                        distance, stack.size());
             }
         }
         return result;

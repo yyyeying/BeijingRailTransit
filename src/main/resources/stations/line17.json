@@ -1,6 +1,49 @@
 {
   "line": "17号线",
   "loop": false,
-  "distances": [],
-  "stations": []
+  "distances": [
+    1672,
+    2349,
+    5840,
+    2334,
+    1455,
+    2125
+  ],
+  "stations": [
+    {
+      "name": "十里河",
+      "links": [
+      ]
+    },
+    {
+      "name": "周家庄",
+      "links": [
+      ]
+    },
+    {
+      "name": "十八里店",
+      "links": [
+      ]
+    },
+    {
+      "name": "北神树",
+      "links": [
+      ]
+    },
+    {
+      "name": "次渠北",
+      "links": [
+      ]
+    },
+    {
+      "name": "次渠",
+      "links": [
+      ]
+    },
+    {
+      "name": "嘉会湖",
+      "links": [
+      ]
+    }
+  ]
 }

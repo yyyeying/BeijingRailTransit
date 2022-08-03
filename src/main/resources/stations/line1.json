@@ -44,18 +44,21 @@
     {
       "name": "53站",
       "open": false,
+      "passable": false,
       "links": [
       ]
     },
     {
       "name": "52站",
       "open": false,
+      "passable": false,
       "links": [
       ]
     },
     {
       "name": "苹果园",
       "open": false,
+      "passable": false,
       "links": [
         {
           "name": "苹果园",

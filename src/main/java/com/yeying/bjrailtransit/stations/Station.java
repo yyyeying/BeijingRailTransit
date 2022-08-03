@@ -75,10 +75,10 @@ public class Station {
 
     public int getLinksCount() {
         int linksCount = 0;
-        for (Map.Entry<Station, Integer> element:
+        for (Map.Entry<Station, Integer> element :
                 links.entrySet()) {
             Station station = element.getKey();
-            if (station.isOpen()) {
+            if (station.isPassable()) {
                 linksCount++;
             }
         }
@@ -87,6 +87,16 @@ public class Station {
 
     public boolean isEnd() {
         return getLinksCount() == 1;
+    }
+
+    public boolean isTransferStation() {
+        for (Map.Entry<Station, Integer> element : links.entrySet()) {
+            Station station = element.getKey();
+            if (!station.getLine().equals(this.getLine())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setLinkWithoutCatch(String name, String line, int distance) throws StationNotFoundError, EmptyStationInfoError, StationNotOpenError {
