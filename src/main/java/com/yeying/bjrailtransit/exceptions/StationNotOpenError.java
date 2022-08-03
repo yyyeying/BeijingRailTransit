@@ -1,12 +1,8 @@
 package com.yeying.bjrailtransit.exceptions;
 
-public class StationNotOpenError extends Exception{
-    private final String name;
-    private final String line;
-
-    public StationNotOpenError(String name, String line){
-        this.name = name;
-        this.line = line;
+public class StationNotOpenError extends StationError {
+    public StationNotOpenError(String name, String line) {
+        super(name, line);
     }
 
     @Override

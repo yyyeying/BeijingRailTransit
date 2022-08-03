@@ -42,8 +42,12 @@ public class StationInitializer {
 
                     boolean open = stationObject.optBoolean("open", true);
                     if (!open) {
-                        assert currentStation != null;
                         currentStation.setOpen(false);
+                    }
+
+                    boolean passable = stationObject.optBoolean("passable", true);
+                    if (!passable){
+                        currentStation.setPassable(false);
                     }
 
                     // Last station link
@@ -60,7 +64,6 @@ public class StationInitializer {
                         // System.out.println("Last station index: " + lastStationIndex);
                         String lastStationName = stationsData.getJSONObject(lastStationIndex).getString("name");
                         // int lastDistance = distances.getInt(lastStationIndex);
-                        assert currentStation != null;
                         currentStation.setLink(lastStationName, line, lastDistance);
                     }
 
@@ -77,7 +80,6 @@ public class StationInitializer {
                     if (nextStationIndex >= 0) {
                         // System.out.println("Next station index: " + nextStationIndex);
                         String nextStationName = stationsData.getJSONObject(nextStationIndex).getString("name");
-                        assert currentStation != null;
                         currentStation.setLink(nextStationName, line, nextDistance);
                     }
 
@@ -89,7 +91,6 @@ public class StationInitializer {
                         String linkName = linkObject.getString("name");
                         String linkLine = linkObject.getString("line");
                         int distance = 0;
-                        assert currentStation != null;
                         currentStation.setLink(linkName, linkLine, distance);
                     }
                     System.out.println(currentStation);

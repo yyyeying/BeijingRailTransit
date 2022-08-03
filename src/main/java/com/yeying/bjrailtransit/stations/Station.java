@@ -13,6 +13,7 @@ public class Station {
     private String name;
     private String line;
     private boolean open;
+    private boolean passable;
     private Map<Station, Integer> links;
 
     public Station(String name, String line) {
@@ -20,6 +21,7 @@ public class Station {
         this.setLine(line);
         this.setId();
         this.setOpen(true);
+        this.setPassable(true);
         links = new HashMap<>();
         // System.out.println(this);
     }
@@ -57,6 +59,14 @@ public class Station {
 
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public boolean isPassable() {
+        return passable;
+    }
+
+    public void setPassable(boolean passable) {
+        this.passable = passable;
     }
 
     public Map<Station, Integer> getLinks() {

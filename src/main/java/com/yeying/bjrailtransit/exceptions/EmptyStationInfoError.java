@@ -1,12 +1,8 @@
 package com.yeying.bjrailtransit.exceptions;
 
-public class EmptyStationInfoError extends Exception{
-    private final String name;
-    private final String line;
-
-    public EmptyStationInfoError(String name, String line){
-        this.name = name;
-        this.line = line;
+public class EmptyStationInfoError extends StationError {
+    public EmptyStationInfoError(String name, String line) {
+        super(name, line);
     }
 
     @Override

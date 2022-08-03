@@ -220,6 +220,7 @@
     {
       "name": "大红门",
       "open": false,
+      "passable": true,
       "links": [
       ]
     },

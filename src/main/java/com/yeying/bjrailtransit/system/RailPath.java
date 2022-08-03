@@ -40,7 +40,7 @@ public class RailPath implements Cloneable {
     }
 
     public void addStation(Station station, int distance) throws StationNotOpenError {
-        if (!station.isOpen()) {
+        if (!station.isPassable()) {
             throw new StationNotOpenError(station.getName(), station.getLine());
         }
         path.add(station);

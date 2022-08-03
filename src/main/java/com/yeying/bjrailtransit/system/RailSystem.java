@@ -122,7 +122,7 @@ public class RailSystem {
                     links.entrySet()) {
                 Station linkStation = link.getKey();
                 int linkDistance = link.getValue();
-                if (currentPath.containsStation(linkStation)) {
+                if (currentPath.containsStation(linkStation) || !linkStation.isPassable()) {
                     continue;
                 }
                 RailPath newPath = (RailPath) currentPath.clone();
@@ -134,7 +134,7 @@ public class RailSystem {
                 stack.push(newPath);
                 newPathAppended++;
             }
-            if (newPathAppended == 0 && currentPath.getDistance() > distance){
+            if (newPathAppended == 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
             }
