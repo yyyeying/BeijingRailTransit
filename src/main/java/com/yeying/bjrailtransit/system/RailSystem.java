@@ -110,13 +110,14 @@ public class RailSystem {
         while (!stack.empty()) {
             RailPath currentPath = stack.pop();
             Station currentStation = currentPath.getNewestStation();
-            System.out.println("Current station: " + currentStation + "distance: " + currentPath.getDistance());
+            // System.out.println("Current station: " + currentStation + "distance: " + currentPath.getDistance());
             if (currentStation.isEnd() && currentPath.getDistance() > 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
                 continue;
             }
             Map<Station, Integer> links = currentStation.getLinks();
+            int newPathAppended = 0;
             for (Map.Entry<Station, Integer> link :
                     links.entrySet()) {
                 Station linkStation = link.getKey();
@@ -131,6 +132,11 @@ public class RailSystem {
                     continue;
                 }
                 stack.push(newPath);
+                newPathAppended++;
+            }
+            if (newPathAppended == 0 && currentPath.getDistance() > distance){
+                result = currentPath;
+                distance = currentPath.getDistance();
             }
         }
         return result;
