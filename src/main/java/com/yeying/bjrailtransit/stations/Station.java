@@ -1,8 +1,8 @@
 package com.yeying.bjrailtransit.stations;
 
-import com.yeying.bjrailtransit.exceptions.EmptyStationInfoError;
-import com.yeying.bjrailtransit.exceptions.StationNotFoundError;
-import com.yeying.bjrailtransit.exceptions.StationNotOpenError;
+import com.yeying.bjrailtransit.exceptions.stations.EmptyStationInfoError;
+import com.yeying.bjrailtransit.exceptions.stations.StationNotFoundError;
+import com.yeying.bjrailtransit.exceptions.stations.StationNotOpenError;
 import com.yeying.bjrailtransit.system.RailSystem;
 
 import java.util.HashMap;

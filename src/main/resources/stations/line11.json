@@ -1,0 +1,41 @@
+{
+  "line": "11号线",
+  "loop": false,
+  "distances": [
+    1350,
+    850,
+    689
+  ],
+  "stations": [
+    {
+      "name": "模式口",
+      "open": false,
+      "passable": false,
+      "links": [
+      ]
+    },
+    {
+      "name": "金安桥",
+      "links": [
+        {
+          "name": "金安桥",
+          "line": "6号线"
+        },
+        {
+          "name": "金安桥",
+          "line": "S1线"
+        }
+      ]
+    },
+    {
+      "name": "北辛安",
+      "links": [
+      ]
+    },
+    {
+      "name": "新首钢",
+      "links": [
+      ]
+    }
+  ]
+}

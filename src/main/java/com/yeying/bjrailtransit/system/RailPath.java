@@ -1,6 +1,6 @@
 package com.yeying.bjrailtransit.system;
 
-import com.yeying.bjrailtransit.exceptions.StationNotPassableError;
+import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 
 import java.util.ArrayList;

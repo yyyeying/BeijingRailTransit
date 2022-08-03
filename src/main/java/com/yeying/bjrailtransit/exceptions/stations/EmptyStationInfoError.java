@@ -1,4 +1,4 @@
-package com.yeying.bjrailtransit.exceptions;
+package com.yeying.bjrailtransit.exceptions.stations;
 
 import com.yeying.bjrailtransit.stations.Station;
 

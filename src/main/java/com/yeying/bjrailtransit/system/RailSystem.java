@@ -1,7 +1,7 @@
 package com.yeying.bjrailtransit.system;
 
 import com.yeying.bjrailtransit.exceptions.DuplicateIDError;
-import com.yeying.bjrailtransit.exceptions.StationNotPassableError;
+import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.stations.StationIDHandler;
 
@@ -57,6 +57,9 @@ public class RailSystem {
         stack.push(basicPath);
         while (!stack.empty()) {
             RailPath currentPath = stack.pop();
+            if (distance > 0 && currentPath.getDistance() > distance) {
+                continue;
+            }
             Station currentStation = currentPath.getNewestStation();
             if (currentStation.equals(endStation)) {
                 if (distance < 0 || currentPath.getDistance() < distance) {
@@ -131,6 +134,7 @@ public class RailSystem {
                 } catch (StationNotPassableError e) {
                     continue;
                 }
+                System.out.printf("distance: %d, current station: %s, longest distance: %d\n", newPath.getDistance(), newPath.getNewestStation().getName(), distance);
                 stack.push(newPath);
                 newPathAppended++;
             }
