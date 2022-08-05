@@ -48,6 +48,9 @@ public class RailPath implements Cloneable {
         if (!station.isPassable()) {
             throw new StationNotPassableError(station.getName(), station.getLine());
         }
+        if (path.contains(station)) {
+            return;
+        }
         path.add(station);
         this.distance += distance;
     }
@@ -83,6 +86,13 @@ public class RailPath implements Cloneable {
         return endStation;
     }
 
+    public void setEndStation(Station endStation) throws StationNotPassableError {
+        if (!endStation.isPassable()) {
+            throw new StationNotPassableError(endStation);
+        }
+        this.endStation = endStation;
+    }
+
     public int getDistance() {
         return distance;
     }
@@ -91,19 +101,12 @@ public class RailPath implements Cloneable {
         return this.path.size();
     }
 
-    public void setEndStation(Station endStation) throws StationNotPassableError {
-        if (!endStation.isPassable()) {
-            throw new StationNotPassableError(endStation);
-        }
-        this.endStation = endStation;
-    }
-
     @Override
     public String toString() {
         StringBuilder message = new StringBuilder();
         for (Station s :
                 path) {
-            message.append(s.getName()).append(", ").append(s.getLine()).append("\n");
+            message.append(s.getName()).append(", ").append(s.getLine().getName()).append("\n");
         }
         double kiloDistance = distance / 1000.0;
         message.append("distance: ").append(kiloDistance).append(" km");

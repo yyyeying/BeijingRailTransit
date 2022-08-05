@@ -2,6 +2,7 @@ package com.yeying.bjrailtransit.lines;
 
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.stations.StationInitializer;
+import com.yeying.bjrailtransit.system.RailPath;
 import com.yeying.bjrailtransit.system.RailSystem;
 import org.junit.Test;
 
@@ -146,7 +147,7 @@ public class RailLineTest {
             List<Station> nextStation = RailSystem.getInstance().getStation(aCase[1], aCase[0]).getNextCriticalStation();
             StringBuilder message = new StringBuilder();
             message.append("next critical station of [").append(aCase[1]).append(", ").append(aCase[0]).append("]: ");
-            for (Station station: nextStation){
+            for (Station station : nextStation) {
                 message.append(station.getName()).append(", ");
             }
             System.out.println(message);
@@ -158,6 +159,52 @@ public class RailLineTest {
         if (!initialized) {
             StationInitializer.initializeAllStations();
             initialized = true;
+        }
+        List<String[]> testCases = new ArrayList<>();
+        testCases.add(new String[]{"1号线", "古城", "军事博物馆"});
+        testCases.add(new String[]{"2号线", "西直门", "北京站"});
+        testCases.add(new String[]{"2号线", "鼓楼大街", "车公庄"});
+        testCases.add(new String[]{"4号线", "西苑", "黄村西大街"});
+        testCases.add(new String[]{"5号线", "磁器口", "蒲黄榆"});
+        testCases.add(new String[]{"6号线", "北海北", "通州北关"});
+        testCases.add(new String[]{"7号线", "广渠门外", "黄厂"});
+        testCases.add(new String[]{"8号线", "南锣鼓巷", "朱辛庄"});
+        testCases.add(new String[]{"9号线", "北京西站", "国家图书馆"});
+        testCases.add(new String[]{"10号线", "火器营", "十里河"});
+        testCases.add(new String[]{"11号线", "金安桥", "新首钢"});
+        testCases.add(new String[]{"13号线", "东直门", "霍营"});
+        testCases.add(new String[]{"14号线", "善各庄", "丽泽商务区"});
+        for (String[] aCase :
+                testCases) {
+            int distance = RailSystem.getInstance().getLine(aCase[0]).getDistance(aCase[1], aCase[2]);
+            System.out.println("Distance from " + aCase[1] + " to " + aCase[2] + ": " + distance);
+        }
+    }
+
+    @Test
+    public void getPath() {
+        if (!initialized) {
+            StationInitializer.initializeAllStations();
+            initialized = true;
+        }
+        List<String[]> testCases = new ArrayList<>();
+        testCases.add(new String[]{"1号线", "古城", "军事博物馆"});
+        testCases.add(new String[]{"2号线", "西直门", "北京站"});
+        testCases.add(new String[]{"2号线", "鼓楼大街", "车公庄"});
+        testCases.add(new String[]{"4号线", "西苑", "黄村西大街"});
+        testCases.add(new String[]{"5号线", "磁器口", "蒲黄榆"});
+        testCases.add(new String[]{"6号线", "北海北", "通州北关"});
+        testCases.add(new String[]{"7号线", "广渠门外", "黄厂"});
+        testCases.add(new String[]{"8号线", "南锣鼓巷", "朱辛庄"});
+        testCases.add(new String[]{"9号线", "北京西站", "国家图书馆"});
+        testCases.add(new String[]{"10号线", "火器营", "十里河"});
+        testCases.add(new String[]{"11号线", "金安桥", "新首钢"});
+        testCases.add(new String[]{"13号线", "东直门", "霍营"});
+        testCases.add(new String[]{"14号线", "善各庄", "丽泽商务区"});
+        for (String[] aCase :
+                testCases) {
+            RailPath path = RailSystem.getInstance().getLine(aCase[0]).getPath(aCase[1], aCase[2]);
+            System.out.println("Path from " + aCase[1] + " to " + aCase[2] + ": \n" + path);
         }
     }
 }

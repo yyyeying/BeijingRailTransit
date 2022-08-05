@@ -2,17 +2,19 @@ package com.yeying.bjrailtransit.lines;
 
 import com.yeying.bjrailtransit.exceptions.lines.EmptyLineError;
 import com.yeying.bjrailtransit.exceptions.lines.StationNotInLineError;
+import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
+import com.yeying.bjrailtransit.system.RailPath;
 import com.yeying.bjrailtransit.system.RailSystem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RailLine {
+    List<Station> stations;
     private String name;
     private boolean loop;
     private Fare fare;
-    List<Station> stations;
 
     public RailLine() {
         this.stations = new ArrayList<>();
@@ -30,20 +32,20 @@ public class RailLine {
         setLoop(loop);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setLoop(boolean loop) {
-        this.loop = loop;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isLoop() {
         return loop;
+    }
+
+    public void setLoop(boolean loop) {
+        this.loop = loop;
     }
 
     public void addStation(Station station) {
@@ -75,6 +77,13 @@ public class RailLine {
         return 0;
     }
 
+    /**
+     * Get index of a station in this line.
+     *
+     * @param station the station
+     * @return index
+     * @throws StationNotInLineError Station not in this line
+     */
     public int getStationIndex(Station station) throws StationNotInLineError {
         if (!this.equals(station.getLine())) {
             throw new StationNotInLineError(this, station);
@@ -82,6 +91,12 @@ public class RailLine {
         return stations.indexOf(station);
     }
 
+    /**
+     * Get index ascending station of this line.
+     *
+     * @param station the station
+     * @return the next station
+     */
     public Station nextStation(String station) {
         try {
             return nextStation(RailSystem.getInstance().getStation(station, this.getName()));
@@ -91,6 +106,12 @@ public class RailLine {
         return null;
     }
 
+    /**
+     * Get index ascending station of this line.
+     *
+     * @param station the station
+     * @return the next station
+     */
     public Station nextStation(Station station) throws StationNotInLineError {
         if (!this.equals(station.getLine())) {
             throw new StationNotInLineError(this, station);
@@ -106,6 +127,12 @@ public class RailLine {
         }
     }
 
+    /**
+     * Get index descending station of this line.
+     *
+     * @param station the station
+     * @return the last station
+     */
     public Station lastStation(String station) {
         try {
             return lastStation(RailSystem.getInstance().getStation(station, this.getName()));
@@ -115,6 +142,12 @@ public class RailLine {
         return null;
     }
 
+    /**
+     * Get index descending station of this line.
+     *
+     * @param station the station
+     * @return the last station
+     */
     public Station lastStation(Station station) throws StationNotInLineError {
         if (!this.equals(station.getLine())) {
             throw new StationNotInLineError(this, station);
@@ -130,6 +163,12 @@ public class RailLine {
         }
     }
 
+    /**
+     * Get critical stations.
+     * Critical station is transfer station or end station.
+     *
+     * @return A list of stations.
+     */
     public List<Station> getNextCriticalStation(Station station) {
         List<Station> result = new ArrayList<>();
         Station leftStation = station;
@@ -181,6 +220,12 @@ public class RailLine {
         return result;
     }
 
+    /**
+     * Get the first station
+     *
+     * @return The first station of line
+     * @throws EmptyLineError Line has no station
+     */
     public Station getFirstStation() throws EmptyLineError {
         if (getStationCount() <= 0) {
             throw new EmptyLineError(this);
@@ -188,6 +233,12 @@ public class RailLine {
         return stations.get(0);
     }
 
+    /**
+     * Get the last station
+     *
+     * @return The last station of line
+     * @throws EmptyLineError Line has no station
+     */
     public Station getLastStation() throws EmptyLineError {
         if (getStationCount() <= 0) {
             throw new EmptyLineError(this);
@@ -195,8 +246,34 @@ public class RailLine {
         return stations.get(getStationCount() - 1);
     }
 
+    /**
+     * Get the shortest distance from one station to another, two station should belong to this line.
+     *
+     * @param startStation start station
+     * @param endStation   end station
+     * @return distance
+     */
+    public int getDistance(String startStation, String endStation) {
+        Station start = RailSystem.getInstance().getStation(startStation, this.getName());
+        Station end = RailSystem.getInstance().getStation(endStation, this.getName());
+        try {
+            return getDistance(start, end);
+        } catch (StationNotInLineError e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * Get the shortest distance from one station to another, two station should belong to this line.
+     *
+     * @param startStation start station
+     * @param endStation   end station
+     * @return distance
+     * @throws StationNotInLineError Station not in this line
+     */
     public int getDistance(Station startStation, Station endStation) throws StationNotInLineError {
-        System.out.println("getDistance: from " + startStation + " to " + endStation);
+        // System.out.println("getDistance: from " + startStation + " to " + endStation);
         if (!this.equals(startStation.getLine())) {
             throw new StationNotInLineError(this, startStation);
         }
@@ -261,6 +338,120 @@ public class RailLine {
                 }
             }
             return distance;
+        }
+    }
+
+    /**
+     * Get path from onr station to another station, two station should belong to this line.
+     *
+     * @param startStation start station
+     * @param endStation   end station
+     * @return path
+     */
+    public RailPath getPath(String startStation, String endStation) {
+        Station start = RailSystem.getInstance().getStation(startStation, this.getName());
+        Station end = RailSystem.getInstance().getStation(endStation, this.getName());
+        try {
+            return getPath(start, end);
+        } catch (StationNotInLineError e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Get path from onr station to another station, two station should belong to this line.
+     *
+     * @param startStation start station
+     * @param endStation   end station
+     * @return path
+     * @throws StationNotInLineError Station not in this line
+     */
+    public RailPath getPath(Station startStation, Station endStation) throws StationNotInLineError {
+        if (!this.equals(startStation.getLine())) {
+            throw new StationNotInLineError(this, startStation);
+        }
+        if (!this.equals(endStation.getLine())) {
+            throw new StationNotInLineError(this, endStation);
+        }
+        int start, end;
+        try {
+            start = this.getStationIndex(startStation);
+            end = this.getStationIndex(endStation);
+        } catch (StationNotInLineError e) {
+            e.printStackTrace();
+            return null;
+        }
+        RailPath result = new RailPath(startStation, endStation);
+        if (!this.isLoop()) {
+            boolean upward = start < end;
+            int ptr = start;
+            while (true) {
+                Station station = stations.get(ptr);
+                if (station.equals(endStation)) {
+                    return result;
+                }
+                if (upward) {
+                    Station nextStation = nextStation(station);
+                    try {
+                        result.addStation(nextStation, station.distanceTo(nextStation));
+                    } catch (StationNotPassableError e) {
+                        e.printStackTrace();
+                    }
+                    ptr++;
+                } else {
+                    Station lastStation = lastStation(station);
+                    try {
+                        result.addStation(lastStation, station.distanceTo(lastStation));
+                    } catch (StationNotPassableError e) {
+                        e.printStackTrace();
+                    }
+                    ptr--;
+                }
+            }
+
+        } else {
+            int ptr = start;
+            RailPath leftPath = new RailPath(startStation, endStation);
+            while (true) {
+                Station station = stations.get(ptr);
+                // System.out.println("left station: " + station);
+                if (station.equals(endStation)) {
+                    result = leftPath;
+                    break;
+                }
+                Station nextStation = nextStation(station);
+                try {
+                    leftPath.addStation(nextStation, station.distanceTo(nextStation));
+                } catch (StationNotPassableError e) {
+                    e.printStackTrace();
+                }
+                ptr++;
+                if (ptr >= this.getStationCount()) {
+                    ptr = 0;
+                }
+            }
+            ptr = start;
+            RailPath rightPath = new RailPath(startStation, endStation);
+            while (true) {
+                Station station = stations.get(ptr);
+                // System.out.println("right station: " + station);
+                if (stations.get(ptr).equals(endStation)) {
+                    result = rightPath.getDistance() > result.getDistance() ? rightPath : result;
+                    break;
+                }
+                Station lastStation = lastStation(station);
+                try {
+                    rightPath.addStation(lastStation, station.distanceTo(lastStation));
+                } catch (StationNotPassableError e) {
+                    e.printStackTrace();
+                }
+                ptr--;
+                if (ptr <= 0) {
+                    ptr = this.getStationCount() - 1;
+                }
+            }
+            return result;
         }
     }
 

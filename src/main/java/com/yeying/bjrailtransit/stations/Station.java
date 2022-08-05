@@ -1,5 +1,6 @@
 package com.yeying.bjrailtransit.stations;
 
+import com.yeying.bjrailtransit.exceptions.lines.StationNotInLineError;
 import com.yeying.bjrailtransit.exceptions.stations.EmptyStationInfoError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotFoundError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
@@ -55,18 +56,42 @@ public class Station {
         this.line = RailSystem.getInstance().getLine(line);
     }
 
+    /**
+     * Whether the station is open.
+     * 未开通的车站是false
+     *
+     * @return boolean
+     */
     public boolean isOpen() {
         return open;
     }
 
+    /**
+     * Set whether the station is open
+     * 未开通的车站是false
+     *
+     * @param open boolean
+     */
     public void setOpen(boolean open) {
         this.open = open;
     }
 
+    /**
+     * Whether the station is passable.
+     * 未开通但位于线路中间的车站是true
+     *
+     * @return boolean
+     */
     public boolean isPassable() {
         return passable;
     }
 
+    /**
+     * Whether the station is passable.
+     * 未开通但位于线路中间的车站是true
+     *
+     * @param passable boolean
+     */
     public void setPassable(boolean passable) {
         this.passable = passable;
     }
@@ -87,10 +112,22 @@ public class Station {
         return linksCount;
     }
 
+    /**
+     * Whether the station is end.
+     * 一般的终点站会被列为end。
+     * 如环球度假区，不是end。
+     *
+     * @return boolean
+     */
     public boolean isEnd() {
         return getLinksCount() == 1;
     }
 
+    /**
+     * Whether station is transfer station
+     *
+     * @return boolean
+     */
     public boolean isTransferStation() {
         for (Map.Entry<Station, Integer> element : links.entrySet()) {
             Station station = element.getKey();
@@ -101,12 +138,42 @@ public class Station {
         return false;
     }
 
+    /**
+     * Get critical stations.
+     * Critical station is transfer station or end station.
+     *
+     * @return A list of stations.
+     */
     public List<Station> getNextCriticalStation() {
         return this.line.getNextCriticalStation(this);
     }
 
-    public int distanceTo(Station station){
+    /**
+     * Get distance to another station.
+     *
+     * @param station A station links to this station.
+     * @return distance
+     */
+    public int distanceTo(Station station) {
         return this.links.get(station);
+    }
+
+    public Station nextStation() {
+        try {
+            return this.line.nextStation(this);
+        } catch (StationNotInLineError e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Station lastStation() {
+        try {
+            return this.line.lastStation(this);
+        } catch (StationNotInLineError e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void setLinkWithoutCatch(String name, String line, int distance) throws StationNotFoundError, EmptyStationInfoError, StationNotPassableError {
