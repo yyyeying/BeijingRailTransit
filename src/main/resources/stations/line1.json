@@ -1,6 +1,7 @@
 {
   "line": "1号线",
   "loop": false,
+  "fare": "BEIJING_SUBWAY",
   "distances": [
     1839,
     1631,

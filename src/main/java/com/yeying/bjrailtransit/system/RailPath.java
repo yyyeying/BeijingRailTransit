@@ -87,6 +87,10 @@ public class RailPath implements Cloneable {
         return distance;
     }
 
+    public int getStationCount() {
+        return this.path.size();
+    }
+
     public void setEndStation(Station endStation) throws StationNotPassableError {
         if (!endStation.isPassable()) {
             throw new StationNotPassableError(endStation);

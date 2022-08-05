@@ -2,7 +2,8 @@ package com.yeying.bjrailtransit.stations;
 
 import com.yeying.bjrailtransit.exceptions.stations.EmptyStationInfoError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotFoundError;
-import com.yeying.bjrailtransit.exceptions.stations.StationNotOpenError;
+import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
+import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.system.RailSystem;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.Map;
 public class Station {
     private int id;
     private String name;
-    private String line;
+    private RailLine line;
     private boolean open;
     private boolean passable;
     private Map<Station, Integer> links;
@@ -30,7 +31,7 @@ public class Station {
         if (name == null || line == null) {
             return;
         }
-        id = StationIDHandler.generateID(name, line);
+        id = StationIDHandler.generateID(name, line.getName());
     }
 
     public int getId() {
@@ -45,12 +46,12 @@ public class Station {
         this.name = name;
     }
 
-    public String getLine() {
+    public RailLine getLine() {
         return line;
     }
 
     public void setLine(String line) {
-        this.line = line;
+        this.line = RailSystem.getInstance().getLine(line);
     }
 
     public boolean isOpen() {
@@ -99,7 +100,7 @@ public class Station {
         return false;
     }
 
-    private void setLinkWithoutCatch(String name, String line, int distance) throws StationNotFoundError, EmptyStationInfoError, StationNotOpenError {
+    private void setLinkWithoutCatch(String name, String line, int distance) throws StationNotFoundError, EmptyStationInfoError, StationNotPassableError {
         if (name == null || line == null) {
             throw new EmptyStationInfoError(name, line);
         }
@@ -107,8 +108,8 @@ public class Station {
         if (destinationStation == null) {
             throw new StationNotFoundError(name, line);
         }
-        if (!line.equals(this.line) && !destinationStation.isOpen()) {
-            throw new StationNotOpenError(name, line);
+        if (!RailSystem.getInstance().getLine(line).equals(this.getLine()) && !destinationStation.isPassable()) {
+            throw new StationNotPassableError(name, line);
         }
         links.put(destinationStation, distance);
     }
@@ -116,9 +117,11 @@ public class Station {
     public void setLink(String name, String line, int distance) {
         try {
             setLinkWithoutCatch(name, line, distance);
-        } catch (EmptyStationInfoError | StationNotFoundError | StationNotOpenError e) {
+        } catch (EmptyStationInfoError | StationNotFoundError e) {
             e.printStackTrace();
             System.exit(-1);
+        } catch (StationNotPassableError e) {
+            System.out.println("set a link with not passable station");
         }
     }
 
@@ -127,11 +130,11 @@ public class Station {
         StringBuilder message = new StringBuilder();
         message.append("ID: ").append(id).append(", ");
         message.append("name: ").append(name).append(", ");
-        message.append("line: ").append(line).append(", ");
+        message.append("line: ").append(line.getName()).append(", ");
         message.append("links: ").append(links.size()).append(", ");
         for (Map.Entry<Station, Integer> link :
                 links.entrySet()) {
-            String linkMsg = "[" + link.getKey().name + ", " + link.getKey().line + ", " + link.getValue() + "]";
+            String linkMsg = "[" + link.getKey().name + ", " + link.getKey().line.getName() + ", " + link.getValue() + "]";
             message.append(linkMsg);
         }
         return message.toString();

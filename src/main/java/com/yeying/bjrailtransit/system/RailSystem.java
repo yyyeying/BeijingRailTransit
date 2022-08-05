@@ -2,6 +2,7 @@ package com.yeying.bjrailtransit.system;
 
 import com.yeying.bjrailtransit.exceptions.DuplicateIDError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
+import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.stations.StationIDHandler;
 
@@ -10,9 +11,11 @@ import java.util.*;
 public class RailSystem {
     private static RailSystem instance = new RailSystem();
     private Map<Integer, Station> stations;
+    private Map<String, RailLine> lines;
 
     private RailSystem() {
         this.stations = new HashMap<>();
+        this.lines = new HashMap<>();
     }
 
     public static RailSystem getInstance() {
@@ -24,8 +27,12 @@ public class RailSystem {
         if (!stations.containsKey(id)) {
             Station newStation = new Station(name, line);
             stations.put(id, newStation);
+            RailLine theLine = getLine(line);
+            theLine.addStation(newStation);
         } else if (!stations.get(id).getName().equals(name)) {
-            throw new DuplicateIDError(new String[]{stations.get(id).getName(), name}, new String[]{stations.get(id).getLine(), line});
+            throw new DuplicateIDError(
+                    new String[]{stations.get(id).getName(), name},
+                    new String[]{stations.get(id).getLine().getName(), line});
         }
         return stations.get(id);
     }
@@ -38,6 +45,14 @@ public class RailSystem {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public RailLine getLine(String lineName) {
+        if (!lines.containsKey(lineName)) {
+            RailLine newLine = new RailLine(lineName);
+            lines.put(lineName, newLine);
+        }
+        return lines.get(lineName);
     }
 
     /**
@@ -119,10 +134,10 @@ public class RailSystem {
             if (currentStation.isEnd() && currentPath.getDistance() > 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
-                System.out.printf("new result: from [%s, %s] to [%s, %s], distance: %d m, stack size: %d\n",
-                        result.getStartStation().getName(), result.getStartStation().getLine(),
-                        result.getNewestStation().getName(), result.getNewestStation().getLine(),
-                        distance, stack.size());
+                System.out.printf("new result: from [%s, %s] to [%s, %s], count: %d, distance: %d m, stack size: %d\n",
+                        result.getStartStation().getName(), result.getStartStation().getLine().getName(),
+                        result.getNewestStation().getName(), result.getNewestStation().getLine().getName(),
+                        result.getStationCount(), distance, stack.size());
                 continue;
             }
             Map<Station, Integer> links = currentStation.getLinks();
@@ -141,10 +156,10 @@ public class RailSystem {
                     continue;
                 }
                 if (pathCount % 10000000 == 0) {
-                    System.out.printf("distance: %d, from [%s, %s] to [%s, %s], longest distance: %d, stack size: %d \n",
-                            newPath.getDistance(),
-                            newPath.getStartStation().getName(), newPath.getStartStation().getLine(),
-                            newPath.getNewestStation().getName(), newPath.getNewestStation().getLine(),
+                    System.out.printf("distance: %d, count: %d, from [%s, %s] to [%s, %s], longest distance: %d, stack size: %d \n",
+                            newPath.getDistance(), newPath.getStationCount(),
+                            newPath.getStartStation().getName(), newPath.getStartStation().getLine().getName(),
+                            newPath.getNewestStation().getName(), newPath.getNewestStation().getLine().getName(),
                             distance, stack.size());
                 }
                 stack.push(newPath);
@@ -153,10 +168,10 @@ public class RailSystem {
             if (newPathAppended == 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
-                System.out.printf("new result: from [%s, %s] to [%s, %s], distance: %d m, stack size: %d\n",
-                        result.getStartStation().getName(), result.getStartStation().getLine(),
-                        result.getNewestStation().getName(), result.getNewestStation().getLine(),
-                        distance, stack.size());
+                System.out.printf("new result: from [%s, %s] to [%s, %s], count: %d, distance: %d m, stack size: %d\n",
+                        result.getStartStation().getName(), result.getStartStation().getLine().getName(),
+                        result.getNewestStation().getName(), result.getNewestStation().getLine().getName(),
+                        result.getStationCount(), distance, stack.size());
             }
         }
         return result;

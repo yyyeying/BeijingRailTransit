@@ -1,6 +1,7 @@
 package com.yeying.bjrailtransit.stations;
 
 
+import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.system.RailSystem;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,6 +34,10 @@ public class StationInitializer {
                 String line = obj.getString("line");
                 System.out.println(line);
                 boolean loop = obj.getBoolean("loop");
+                String fare = obj.optString("fare", "BEIJING_SUBWAY");
+                RailLine newLine = RailSystem.getInstance().getLine(line);
+                newLine.setLoop(loop);
+                newLine.setFare(fare);
                 JSONArray distances = obj.getJSONArray("distances");
                 JSONArray stationsData = obj.getJSONArray("stations");
                 for (int i = 0; i < stationsData.length(); i++) {

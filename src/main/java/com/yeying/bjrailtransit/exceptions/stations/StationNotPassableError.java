@@ -1,5 +1,6 @@
 package com.yeying.bjrailtransit.exceptions.stations;
 
+import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.stations.Station;
 
 public class StationNotPassableError extends StationError {
@@ -9,6 +10,10 @@ public class StationNotPassableError extends StationError {
 
     public StationNotPassableError(Station station) {
         super(station);
+    }
+
+    public StationNotPassableError(String name, RailLine line) {
+        super(name, line);
     }
 
     @Override
