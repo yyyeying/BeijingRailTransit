@@ -27,8 +27,6 @@ public class RailSystem {
         if (!stations.containsKey(id)) {
             Station newStation = new Station(name, line);
             stations.put(id, newStation);
-            RailLine theLine = getLine(line);
-            theLine.addStation(newStation);
         } else if (!stations.get(id).getName().equals(name)) {
             throw new DuplicateIDError(
                     new String[]{stations.get(id).getName(), name},
@@ -43,6 +41,7 @@ public class RailSystem {
             result = getStationWithoutCatch(name, line);
         } catch (DuplicateIDError e) {
             e.printStackTrace();
+            System.exit(-1);
         }
         return result;
     }
@@ -82,21 +81,30 @@ public class RailSystem {
                     continue;
                 }
             }
-            Map<Station, Integer> links = currentStation.getLinks();
-            for (Map.Entry<Station, Integer> link :
-                    links.entrySet()) {
-                Station linkStation = link.getKey();
-                int linkDistance = link.getValue();
-                if (currentPath.containsStation(linkStation)) {
-                    continue;
+            if (currentStation.getLine().equals(endStation.getLine()))
+            {
+                Map<Station, Integer> links = currentStation.getLinks();
+                for (Map.Entry<Station, Integer> link :
+                        links.entrySet()) {
+                    Station linkStation = link.getKey();
+                    int linkDistance = link.getValue();
+                    if (currentPath.containsStation(linkStation)) {
+                        continue;
+                    }
+                    RailPath newPath = (RailPath) currentPath.clone();
+                    try {
+                        newPath.addStation(linkStation, linkDistance);
+                    } catch (StationNotPassableError e) {
+                        continue;
+                    }
+                    queue.offer(newPath);
                 }
-                RailPath newPath = (RailPath) currentPath.clone();
-                try {
-                    newPath.addStation(linkStation, linkDistance);
-                } catch (StationNotPassableError e) {
-                    continue;
+            } else {
+                List<Station> nearestCriticalStations = currentStation.getNextCriticalStation();
+                for (Station station:
+                     nearestCriticalStations) {
+                    RailPath newPath = (RailPath) currentPath.clone();
                 }
-                queue.offer(newPath);
             }
         }
         return result;

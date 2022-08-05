@@ -44,6 +44,7 @@ public class StationInitializer {
                     JSONObject stationObject = stationsData.getJSONObject(i);
                     String name = stationObject.getString("name");
                     Station currentStation = RailSystem.getInstance().getStation(name, line);
+                    newLine.addStation(currentStation);
 
                     boolean open = stationObject.optBoolean("open", true);
                     if (!open) {

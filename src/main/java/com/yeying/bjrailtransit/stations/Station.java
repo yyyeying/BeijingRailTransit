@@ -7,6 +7,7 @@ import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.system.RailSystem;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Station {
@@ -98,6 +99,14 @@ public class Station {
             }
         }
         return false;
+    }
+
+    public List<Station> getNextCriticalStation() {
+        return this.line.getNextCriticalStation(this);
+    }
+
+    public int distanceTo(Station station){
+        return this.links.get(station);
     }
 
     private void setLinkWithoutCatch(String name, String line, int distance) throws StationNotFoundError, EmptyStationInfoError, StationNotPassableError {
