@@ -5,6 +5,7 @@ import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.stations.StationIDHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -61,7 +62,8 @@ public class RailSystem {
      * @param endStation   end station
      * @return RailPath
      */
-    public RailPath shortestPath(Station startStation, Station endStation) {
+    public RailPath shortestPath(@NotNull Station startStation, @NotNull Station endStation) {
+        // System.out.println("Find shortest path from " + startStation.getName() + " to " + endStation.getName());
         Queue<RailPath> queue = new LinkedList<>();
         RailPath basicPath = new RailPath(startStation);
         RailPath result = basicPath;
@@ -74,6 +76,7 @@ public class RailSystem {
                 continue;
             }
             Station currentStation = currentPath.getNewestStation();
+            // System.out.println("current station: [" + currentStation.getName() + ", " + currentStation.getLine().getName() + "]");
             if (currentStation.equals(endStation)) {
                 if (distance < 0 || currentPath.getDistance() < distance) {
                     result = currentPath;
@@ -81,8 +84,7 @@ public class RailSystem {
                     continue;
                 }
             }
-            if (currentStation.getLine().equals(endStation.getLine()))
-            {
+            if (currentStation.getLine().equals(endStation.getLine())) {
                 Map<Station, Integer> links = currentStation.getLinks();
                 for (Map.Entry<Station, Integer> link :
                         links.entrySet()) {
@@ -97,13 +99,36 @@ public class RailSystem {
                     } catch (StationNotPassableError e) {
                         continue;
                     }
+                    // System.out.println("add new link: from " + currentStation.getName() + " to " + currentStation.getName());
                     queue.offer(newPath);
                 }
             } else {
-                List<Station> nearestCriticalStations = currentStation.getNextCriticalStation();
-                for (Station station:
-                     nearestCriticalStations) {
+                Map<Station, Integer> links = currentStation.getLinks();
+                for (Map.Entry<Station, Integer> link :
+                        links.entrySet()) {
+                    Station linkStation = link.getKey();
+                    int linkDistance = link.getValue();
+                    if (currentPath.containsStation(linkStation) || currentStation.getLine().equals(linkStation.getLine())) {
+                        continue;
+                    }
                     RailPath newPath = (RailPath) currentPath.clone();
+                    try {
+                        newPath.addStation(linkStation, linkDistance);
+                    } catch (StationNotPassableError e) {
+                        continue;
+                    }
+                    // System.out.println("add new link: from " + currentStation.getName() + " to " + currentStation.getName());
+                    queue.offer(newPath);
+                }
+                List<Station> nearestCriticalStations = currentStation.getNextCriticalStation();
+                for (Station station :
+                        nearestCriticalStations) {
+                    if (currentPath.containsStation(station)) {
+                        continue;
+                    }
+                    RailPath newPath = (RailPath) currentPath.clone();
+                    newPath.concat(currentStation.getPath(station));
+                    queue.offer(newPath);
                 }
             }
         }
@@ -148,13 +173,25 @@ public class RailSystem {
                         result.getStationCount(), distance, stack.size());
                 continue;
             }
-            Map<Station, Integer> links = currentStation.getLinks();
             int newPathAppended = 0;
+            List<Station> nearestCriticalStations = currentStation.getNextCriticalStation();
+            for (Station station :
+                    nearestCriticalStations) {
+                if (currentPath.containsStation(station)) {
+                    continue;
+                }
+                RailPath newPath = (RailPath) currentPath.clone();
+                newPath.concat(currentStation.getPath(station));
+                stack.add(newPath);
+                System.out.println(pathCount + ": add new link from " + currentStation + " to " + station);
+                newPathAppended++;
+            }
+            Map<Station, Integer> links = currentStation.getLinks();
             for (Map.Entry<Station, Integer> link :
                     links.entrySet()) {
                 Station linkStation = link.getKey();
                 int linkDistance = link.getValue();
-                if (currentPath.containsStation(linkStation)) {
+                if (currentPath.containsStation(linkStation) || currentStation.getLine().equals(linkStation.getLine())) {
                     continue;
                 }
                 RailPath newPath = (RailPath) currentPath.clone();
@@ -163,7 +200,7 @@ public class RailSystem {
                 } catch (StationNotPassableError e) {
                     continue;
                 }
-                if (pathCount % 10000000 == 0) {
+                if (pathCount % 1000000 == 0) {
                     System.out.printf("distance: %d, count: %d, from [%s, %s] to [%s, %s], longest distance: %d, stack size: %d \n",
                             newPath.getDistance(), newPath.getStationCount(),
                             newPath.getStartStation().getName(), newPath.getStartStation().getLine().getName(),
@@ -171,6 +208,7 @@ public class RailSystem {
                             distance, stack.size());
                 }
                 stack.push(newPath);
+                System.out.println(pathCount + ": add new link from " + currentStation + " to " + linkStation);
                 newPathAppended++;
             }
             if (newPathAppended == 0 && currentPath.getDistance() > distance) {

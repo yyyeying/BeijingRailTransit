@@ -198,6 +198,8 @@ public class RailLineTest {
         testCases.add(new String[]{"8号线", "南锣鼓巷", "朱辛庄"});
         testCases.add(new String[]{"9号线", "北京西站", "国家图书馆"});
         testCases.add(new String[]{"10号线", "火器营", "十里河"});
+        testCases.add(new String[]{"10号线", "慈寿寺", "十里河"});
+        testCases.add(new String[]{"10号线", "慈寿寺", "巴沟"});
         testCases.add(new String[]{"11号线", "金安桥", "新首钢"});
         testCases.add(new String[]{"13号线", "东直门", "霍营"});
         testCases.add(new String[]{"14号线", "善各庄", "丽泽商务区"});

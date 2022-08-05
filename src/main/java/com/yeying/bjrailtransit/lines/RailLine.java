@@ -6,6 +6,7 @@ import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 import com.yeying.bjrailtransit.system.RailPath;
 import com.yeying.bjrailtransit.system.RailSystem;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class RailLine {
      * @return index
      * @throws StationNotInLineError Station not in this line
      */
-    public int getStationIndex(Station station) throws StationNotInLineError {
+    public int getStationIndex(@NotNull Station station) throws StationNotInLineError {
         if (!this.equals(station.getLine())) {
             throw new StationNotInLineError(this, station);
         }
@@ -112,7 +113,7 @@ public class RailLine {
      * @param station the station
      * @return the next station
      */
-    public Station nextStation(Station station) throws StationNotInLineError {
+    public Station nextStation(@NotNull Station station) throws StationNotInLineError {
         if (!this.equals(station.getLine())) {
             throw new StationNotInLineError(this, station);
         }
@@ -148,7 +149,7 @@ public class RailLine {
      * @param station the station
      * @return the last station
      */
-    public Station lastStation(Station station) throws StationNotInLineError {
+    public Station lastStation(@NotNull Station station) throws StationNotInLineError {
         if (!this.equals(station.getLine())) {
             throw new StationNotInLineError(this, station);
         }
@@ -169,12 +170,16 @@ public class RailLine {
      *
      * @return A list of stations.
      */
-    public List<Station> getNextCriticalStation(Station station) {
+    public List<Station> getNextCriticalStation(@NotNull Station station) {
+        // System.out.println("Get next critical station: [" + station.getName() + ", " + station.getLine().getName() + "]");
         List<Station> result = new ArrayList<>();
         Station leftStation = station;
         while (true) {
+            if (leftStation == null) {
+                break;
+            }
             if (!leftStation.equals(station) && (leftStation.isTransferStation()
-                    || leftStation.isEnd())) {
+                    || leftStation.isEnd()) && leftStation.isPassable()) {
                 result.add(leftStation);
                 break;
             }
@@ -194,8 +199,13 @@ public class RailLine {
         }
         Station rightStation = station;
         while (true) {
-            if (!rightStation.equals(station) && (rightStation.isTransferStation()
-                    || rightStation.isEnd())) {
+            // System.out.println("right station: " + rightStation);
+            if (rightStation == null) {
+                break;
+            }
+            if (!station.equals(rightStation)
+                    && (rightStation.isTransferStation() || rightStation.isEnd())
+                    && rightStation.isPassable()) {
                 if (!result.contains(rightStation)) {
                     result.add(rightStation);
                     break;
@@ -272,7 +282,7 @@ public class RailLine {
      * @return distance
      * @throws StationNotInLineError Station not in this line
      */
-    public int getDistance(Station startStation, Station endStation) throws StationNotInLineError {
+    public int getDistance(@NotNull Station startStation, Station endStation) throws StationNotInLineError {
         // System.out.println("getDistance: from " + startStation + " to " + endStation);
         if (!this.equals(startStation.getLine())) {
             throw new StationNotInLineError(this, startStation);
@@ -367,13 +377,17 @@ public class RailLine {
      * @return path
      * @throws StationNotInLineError Station not in this line
      */
-    public RailPath getPath(Station startStation, Station endStation) throws StationNotInLineError {
+    public RailPath getPath(@NotNull Station startStation, @NotNull Station endStation) throws StationNotInLineError {
         if (!this.equals(startStation.getLine())) {
             throw new StationNotInLineError(this, startStation);
         }
         if (!this.equals(endStation.getLine())) {
             throw new StationNotInLineError(this, endStation);
         }
+        /*
+        System.out.println("get path: from [" + startStation.getName() + ", " + startStation.getLine().getName()
+                + "] to [" + endStation.getName() + ", " + endStation.getLine().getName() + "]");
+        */
         int start, end;
         try {
             start = this.getStationIndex(startStation);
@@ -411,12 +425,12 @@ public class RailLine {
             }
 
         } else {
-            int ptr = start;
+            Station station = startStation;
             RailPath leftPath = new RailPath(startStation, endStation);
             while (true) {
-                Station station = stations.get(ptr);
                 // System.out.println("left station: " + station);
                 if (station.equals(endStation)) {
+                    // System.out.println("left distance: " + leftPath.getDistance());
                     result = leftPath;
                     break;
                 }
@@ -426,18 +440,15 @@ public class RailLine {
                 } catch (StationNotPassableError e) {
                     e.printStackTrace();
                 }
-                ptr++;
-                if (ptr >= this.getStationCount()) {
-                    ptr = 0;
-                }
+                station = nextStation;
             }
-            ptr = start;
+            station = startStation;
             RailPath rightPath = new RailPath(startStation, endStation);
             while (true) {
-                Station station = stations.get(ptr);
                 // System.out.println("right station: " + station);
-                if (stations.get(ptr).equals(endStation)) {
-                    result = rightPath.getDistance() > result.getDistance() ? rightPath : result;
+                if (station.equals(endStation)) {
+                    // System.out.println("right distance: " + rightPath.getDistance());
+                    result = rightPath.getDistance() > result.getDistance() ? result : rightPath;
                     break;
                 }
                 Station lastStation = lastStation(station);
@@ -446,10 +457,7 @@ public class RailLine {
                 } catch (StationNotPassableError e) {
                     e.printStackTrace();
                 }
-                ptr--;
-                if (ptr <= 0) {
-                    ptr = this.getStationCount() - 1;
-                }
+                station = lastStation;
             }
             return result;
         }

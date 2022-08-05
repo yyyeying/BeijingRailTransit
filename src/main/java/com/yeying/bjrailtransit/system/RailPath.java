@@ -2,6 +2,7 @@ package com.yeying.bjrailtransit.system;
 
 import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class RailPath implements Cloneable {
         }
     }
 
-    public void addStation(Station station, int distance) throws StationNotPassableError {
+    public void addStation(@NotNull Station station, int distance) throws StationNotPassableError {
         if (!station.isPassable()) {
             throw new StationNotPassableError(station.getName(), station.getLine());
         }
@@ -75,7 +76,7 @@ public class RailPath implements Cloneable {
         return startStation;
     }
 
-    public void setStartStation(Station startStation) throws StationNotPassableError {
+    public void setStartStation(@NotNull Station startStation) throws StationNotPassableError {
         if (!startStation.isPassable()) {
             throw new StationNotPassableError(startStation.getName(), startStation.getLine());
         }
@@ -86,7 +87,7 @@ public class RailPath implements Cloneable {
         return endStation;
     }
 
-    public void setEndStation(Station endStation) throws StationNotPassableError {
+    public void setEndStation(@NotNull Station endStation) throws StationNotPassableError {
         if (!endStation.isPassable()) {
             throw new StationNotPassableError(endStation);
         }
@@ -99,6 +100,26 @@ public class RailPath implements Cloneable {
 
     public int getStationCount() {
         return this.path.size();
+    }
+
+    /**
+     * concat another path
+     *
+     * @param anotherPath another path
+     */
+    public void concat(@NotNull RailPath anotherPath) {
+        this.distance += anotherPath.getDistance();
+        if (!this.getNewestStation().equals(anotherPath.getStartStation())) {
+            System.out.println("Wrong path concat");
+            return;
+        }
+        for (Station station :
+                anotherPath.getPath()) {
+            if (this.path.contains(station)) {
+                continue;
+            }
+            this.path.add(station);
+        }
     }
 
     @Override

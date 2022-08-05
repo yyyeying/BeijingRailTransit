@@ -5,6 +5,7 @@ import com.yeying.bjrailtransit.exceptions.stations.EmptyStationInfoError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotFoundError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.lines.RailLine;
+import com.yeying.bjrailtransit.system.RailPath;
 import com.yeying.bjrailtransit.system.RailSystem;
 
 import java.util.HashMap;
@@ -176,6 +177,15 @@ public class Station {
         return null;
     }
 
+    public RailPath getPath(Station station) {
+        try {
+            return this.line.getPath(this, station);
+        } catch (StationNotInLineError e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void setLinkWithoutCatch(String name, String line, int distance) throws StationNotFoundError, EmptyStationInfoError, StationNotPassableError {
         if (name == null || line == null) {
             throw new EmptyStationInfoError(name, line);
@@ -201,8 +211,7 @@ public class Station {
         }
     }
 
-    @Override
-    public String toString() {
+    public String fullInfo() {
         StringBuilder message = new StringBuilder();
         message.append("ID: ").append(id).append(", ");
         message.append("name: ").append(name).append(", ");
@@ -214,5 +223,10 @@ public class Station {
             message.append(linkMsg);
         }
         return message.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "[" + name + ", " + line.getName() + "]";
     }
 }
