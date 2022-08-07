@@ -1,5 +1,6 @@
 package com.yeying.bjrailtransit.system;
 
+import com.yeying.bjrailtransit.exceptions.path.DuplicateStationError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.stations.Station;
 import org.jetbrains.annotations.NotNull;
@@ -107,7 +108,7 @@ public class RailPath implements Cloneable {
      *
      * @param anotherPath another path
      */
-    public void concat(@NotNull RailPath anotherPath) {
+    public void concat(@NotNull RailPath anotherPath) throws DuplicateStationError {
         this.distance += anotherPath.getDistance();
         if (!this.getNewestStation().equals(anotherPath.getStartStation())) {
             System.out.println("Wrong path concat");
@@ -115,8 +116,12 @@ public class RailPath implements Cloneable {
         }
         for (Station station :
                 anotherPath.getPath()) {
-            if (this.path.contains(station)) {
+            // System.out.println(station);
+            if (station.equals(this.getNewestStation())) {
                 continue;
+            } else if (this.path.contains(station)) {
+                // System.out.println("concat path: " + anotherPath);
+                throw new DuplicateStationError(station);
             }
             this.path.add(station);
         }
@@ -125,12 +130,14 @@ public class RailPath implements Cloneable {
     @Override
     public String toString() {
         StringBuilder message = new StringBuilder();
+        message.append("From: ").append(startStation).append(" to ").append(endStation).append(", ");
+        double kiloDistance = distance / 1000.0;
+        message.append("distance: ").append(kiloDistance).append(" km, ");
+        message.append("count: ").append(getStationCount()).append("\n");
         for (Station s :
                 path) {
-            message.append(s.getName()).append(", ").append(s.getLine().getName()).append("\n");
+            message.append(s).append(", ");
         }
-        double kiloDistance = distance / 1000.0;
-        message.append("distance: ").append(kiloDistance).append(" km");
         return message.toString();
     }
 

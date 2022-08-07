@@ -1,6 +1,7 @@
 package com.yeying.bjrailtransit.system;
 
 import com.yeying.bjrailtransit.exceptions.DuplicateIDError;
+import com.yeying.bjrailtransit.exceptions.path.DuplicateStationError;
 import com.yeying.bjrailtransit.exceptions.stations.StationNotPassableError;
 import com.yeying.bjrailtransit.lines.RailLine;
 import com.yeying.bjrailtransit.stations.Station;
@@ -127,7 +128,11 @@ public class RailSystem {
                         continue;
                     }
                     RailPath newPath = (RailPath) currentPath.clone();
-                    newPath.concat(currentStation.getPath(station));
+                    try {
+                        newPath.concat(currentStation.getPath(station));
+                    } catch (DuplicateStationError e) {
+                        continue;
+                    }
                     queue.offer(newPath);
                 }
             }
@@ -165,27 +170,17 @@ public class RailSystem {
             Station currentStation = currentPath.getNewestStation();
             // System.out.println("Current station: " + currentStation + "distance: " + currentPath.getDistance());
             if (currentStation.isEnd() && currentPath.getDistance() > 0 && currentPath.getDistance() > distance) {
+                try {
+                    currentPath.setEndStation(currentPath.getNewestStation());
+                } catch (StationNotPassableError e) {
+                    e.printStackTrace();
+                }
                 result = currentPath;
                 distance = currentPath.getDistance();
-                System.out.printf("new result: from [%s, %s] to [%s, %s], count: %d, distance: %d m, stack size: %d\n",
-                        result.getStartStation().getName(), result.getStartStation().getLine().getName(),
-                        result.getNewestStation().getName(), result.getNewestStation().getLine().getName(),
-                        result.getStationCount(), distance, stack.size());
+                System.out.printf("new result: %d, stack size: %d\n%s\n", pathCount, stack.size(), result);
                 continue;
             }
             int newPathAppended = 0;
-            List<Station> nearestCriticalStations = currentStation.getNextCriticalStation();
-            for (Station station :
-                    nearestCriticalStations) {
-                if (currentPath.containsStation(station)) {
-                    continue;
-                }
-                RailPath newPath = (RailPath) currentPath.clone();
-                newPath.concat(currentStation.getPath(station));
-                stack.add(newPath);
-                System.out.println(pathCount + ": add new link from " + currentStation + " to " + station);
-                newPathAppended++;
-            }
             Map<Station, Integer> links = currentStation.getLinks();
             for (Map.Entry<Station, Integer> link :
                     links.entrySet()) {
@@ -200,25 +195,43 @@ public class RailSystem {
                 } catch (StationNotPassableError e) {
                     continue;
                 }
-                if (pathCount % 1000000 == 0) {
-                    System.out.printf("distance: %d, count: %d, from [%s, %s] to [%s, %s], longest distance: %d, stack size: %d \n",
+                if (pathCount % 10000000 == 0) {
+                    System.out.printf("distance: %d, count: %d, from [%s, %s] to [%s, %s], longest distance: %d, stack size: %d \n%s\n",
                             newPath.getDistance(), newPath.getStationCount(),
                             newPath.getStartStation().getName(), newPath.getStartStation().getLine().getName(),
                             newPath.getNewestStation().getName(), newPath.getNewestStation().getLine().getName(),
-                            distance, stack.size());
+                            distance, stack.size(), newPath);
                 }
                 stack.push(newPath);
-                System.out.println(pathCount + ": add new link from " + currentStation + " to " + linkStation);
+                //System.out.println(pathCount + ": add new link from " + currentStation + " to " + linkStation);
                 newPathAppended++;
             }
+            List<Station> nearestCriticalStations = currentStation.getNextCriticalStation();
+            for (Station station :
+                    nearestCriticalStations) {
+                if (currentPath.containsStation(station)) {
+                    continue;
+                }
+                RailPath newPath = (RailPath) currentPath.clone();
+                try {
+                    newPath.concat(currentStation.getPath(station));
+                } catch (DuplicateStationError e) {
+                    // System.out.println(e.toString());
+                    // System.out.println(newPath);
+                    continue;
+                }
+                stack.add(newPath);
+                //System.out.println(pathCount + ": add new link from " + currentStation + " to " + station);
+                newPathAppended++;
+            }
+            /*
             if (newPathAppended == 0 && currentPath.getDistance() > distance) {
                 result = currentPath;
                 distance = currentPath.getDistance();
-                System.out.printf("new result: from [%s, %s] to [%s, %s], count: %d, distance: %d m, stack size: %d\n",
-                        result.getStartStation().getName(), result.getStartStation().getLine().getName(),
-                        result.getNewestStation().getName(), result.getNewestStation().getLine().getName(),
-                        result.getStationCount(), distance, stack.size());
+                System.out.printf("stack size: %d, new result: %d, %s\n", stack.size(), pathCount, result);
             }
+
+             */
         }
         return result;
     }
